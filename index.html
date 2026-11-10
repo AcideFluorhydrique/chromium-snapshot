@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chromium 主幹快照版（Android）</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1d2129;--muted:#5c6370;--line:#e3e6ea;--accent:#5f6368;--accent-text:#fff;--warn-bg:#fff6e5;--warn-line:#f0c36d;--code:#eef1f4}
+@media (prefers-color-scheme:dark){:root{--bg:#121417;--card:#1b1e23;--text:#e6e8eb;--muted:#9aa1ab;--line:#2c3138;--warn-bg:#2a2414;--warn-line:#7a6326;--code:#252a31}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:8px}
+h1{font-size:1.8rem;margin:0 0 4px}
+h2{font-size:1.2rem;margin:0 0 12px}
+.sub{color:var(--muted);margin:0}
+.lang{flex:none;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:16px}
+.ver{font-size:1.4rem;font-weight:600}
+.meta{color:var(--muted);font-size:.9rem}
+.dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:14px}
+.btn{display:block;text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--text);background:var(--bg)}
+.btn strong{display:block}
+.btn span{color:var(--muted);font-size:.85rem}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+.btn.primary span{color:var(--accent-text);opacity:.85}
+.btn.off{opacity:.5;pointer-events:none}
+.warn{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:10px;padding:12px 14px;margin-top:12px}
+ul{padding-left:1.2em;margin:8px 0}
+li{margin:4px 0}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-size:.88em;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+td{border-top:1px solid var(--line);padding:8px 6px;vertical-align:top}
+td:first-child{color:var(--muted);white-space:nowrap;width:1%}
+a{color:var(--accent)}
+footer{margin-top:24px;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div><h1 data-i="title"></h1><p class="sub" data-i="subtitle"></p></div>
+  <button class="lang" id="lang" type="button"></button>
+</header>
+
+<section class="card">
+  <h2 data-i="latest"></h2>
+  <div class="ver" id="ver">…</div>
+  <div class="meta" id="meta"></div>
+  <div class="dl" id="dl"></div>
+  <div class="warn" id="err" hidden></div>
+</section>
+
+<section class="card"><h2 data-i="aboutTitle"></h2><div data-h="about"></div></section>
+<section class="card"><h2 data-i="detailsTitle"></h2><table id="details"></table></section>
+<section class="card"><h2 data-i="obtTitle"></h2><div data-h="obt"></div></section>
+<section class="card"><h2 data-i="notesTitle"></h2><div data-h="notes"></div></section>
+
+<footer><span data-h="footer"></span></footer>
+</main>
+<script>
+const CFG = {"repo": "AcideFluorhydrique/chromium-snapshot", "assets": [{"id": "android", "match": "android-arm64\\.apk$", "label": {"zh": "Android", "en": "Android"}, "hint": {"zh": "arm64 · apk", "en": "arm64 · apk"}}]};
+const T = {"zh": {"switch": "English", "latest": "最新版本", "loading": "讀取中…", "published": "發布於", "releaseNotes": "Release 頁面", "notInRelease": "這個版本沒有提供", "loadError": "無法讀取最新版本，請直接前往 <a href=\"{url}\">Release 頁面</a>。", "aboutTitle": "這是什麼", "detailsTitle": "技術資訊", "obtTitle": "自動更新", "notesTitle": "注意事項", "title": "Chromium 主幹快照版（Android）", "subtitle": "Google 官方編譯的 Chromium 主幹版，每天自動轉發。", "about": "<p>Google 會把 Chromium 主幹的每次編譯上傳到 <a href=\"https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Android_Arm64/\">chromium-browser-snapshots</a>。這裡每天取最新的一個，原封不動發布成 GitHub Release，方便用 Obtainium 追蹤。</p><ul><li>不自行編譯，APK 就是 Google 編譯的那一份，發布前會檢查簽名。</li><li>主幹版的版號形如 <code>160.0.8155.0</code>，最後一位永遠是 0，大約每天換一次。</li><li>只保留最近 10 個 Release。</li></ul>", "details": [["來源", "<code>chromium-browser-snapshots/Android_Arm64</code>"], ["檢查頻率", "每天一次"], ["包名", "<code>org.chromium.chrome</code>"], ["簽名 SHA-256", "<code>32a2fc74d731105859e5a85df16d95f102d85b22099b8064c5d8915c61dad1e0</code>（Chromium 原始碼內建的公開 debug 金鑰）"], ["架構", "arm64"]], "obt": "<p>用 <a href=\"https://github.com/ImranR98/Obtainium\">Obtainium</a> 可以自動收到更新。</p><ul><li>來源網址：<code>https://github.com/AcideFluorhydrique/chromium-snapshot</code></li></ul><p>Obtainium 以包名區分 App，所以不能同時追蹤這裡和 Chromium Stable。</p>", "notes": "<ul><li><strong>這是開發中的版本</strong>：每天都有新功能和新問題，不適合需要穩定的使用情境。需要穩定版請用 <a href=\"https://github.com/AcideFluorhydrique/chromium\">Chromium Stable</a>。</li><li><strong>不能換回穩定版</strong>：這裡的版本號比穩定版高，裝了之後再換回穩定版會被判定為降版，必須先解除安裝，資料會清空。</li><li><strong>無法登入 Google 帳戶與同步</strong>。</li></ul>", "footer": "非 Google 官方發布。APK 由 Google 編譯，這裡只負責轉發。<a href=\"https://github.com/AcideFluorhydrique/chromium-snapshot\">GitHub</a>"}, "en": {"switch": "中文", "latest": "Latest version", "loading": "Loading…", "published": "Published", "releaseNotes": "release page", "notInRelease": "Not included in this release", "loadError": "Could not load the latest release. Please go to the <a href=\"{url}\">release page</a>.", "aboutTitle": "About", "detailsTitle": "Details", "obtTitle": "Automatic updates", "notesTitle": "Notes", "title": "Chromium Snapshot for Android", "subtitle": "Google's own builds of Chromium from the main branch, republished daily.", "about": "<p>Google uploads builds of the Chromium main branch to <a href=\"https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Android_Arm64/\">chromium-browser-snapshots</a>. Once a day the latest one is republished unchanged as a GitHub release so Obtainium can track it.</p><ul><li>Nothing is compiled here. The APK is the one Google built, and its signature is checked before publishing.</li><li>Trunk versions look like <code>160.0.8155.0</code>; the last number is always 0 and the version changes about once a day.</li><li>Only the 10 most recent releases are kept.</li></ul>", "details": [["Source", "<code>chromium-browser-snapshots/Android_Arm64</code>"], ["Check frequency", "Daily"], ["Package", "<code>org.chromium.chrome</code>"], ["Signing SHA-256", "<code>32a2fc74d731105859e5a85df16d95f102d85b22099b8064c5d8915c61dad1e0</code> (the public debug key in the Chromium source)"], ["Architecture", "arm64"]], "obt": "<p>Use <a href=\"https://github.com/ImranR98/Obtainium\">Obtainium</a> to get updates automatically.</p><ul><li>Source URL: <code>https://github.com/AcideFluorhydrique/chromium-snapshot</code></li></ul><p>Obtainium identifies apps by package name, so it cannot track this repository and Chromium Stable at the same time.</p>", "notes": "<ul><li><strong>Development builds</strong>: new features and new bugs arrive every day. For a stable browser, use <a href=\"https://github.com/AcideFluorhydrique/chromium\">Chromium Stable</a>.</li><li><strong>No way back to stable without data loss</strong>: these builds have a higher version number, so switching to the stable build counts as a downgrade and requires uninstalling first.</li><li><strong>No Google account sign-in or sync</strong>.</li></ul>", "footer": "Not an official Google release. The APK is built by Google and only republished here. <a href=\"https://github.com/AcideFluorhydrique/chromium-snapshot\">GitHub</a>"}};
+const REPO = CFG.repo;
+let lang = (() => {
+  try { const s = localStorage.getItem("lang"); if (s === "zh" || s === "en") return s; } catch (e) {}
+  return /^zh/i.test(navigator.language || "") ? "zh" : "en";
+})();
+let release = null, loadError = false;
+
+function t(k) { return T[lang][k]; }
+function fmtSize(n) { return (n / 1048576).toFixed(0) + " MB"; }
+function fmtDate(s) { return new Date(s).toLocaleDateString(lang === "zh" ? "zh-TW" : "en", { year: "numeric", month: "long", day: "numeric" }); }
+
+function render() {
+  document.documentElement.lang = lang === "zh" ? "zh-Hant" : "en";
+  document.title = t("title");
+  document.querySelectorAll("[data-i]").forEach(e => e.textContent = t(e.dataset.i));
+  document.querySelectorAll("[data-h]").forEach(e => e.innerHTML = t(e.dataset.h));
+  document.getElementById("lang").textContent = t("switch");
+  document.getElementById("details").innerHTML = t("details").map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("");
+  const err = document.getElementById("err");
+  err.hidden = !loadError;
+  err.innerHTML = t("loadError").replace("{url}", `https://github.com/${REPO}/releases`);
+  const ver = document.getElementById("ver"), meta = document.getElementById("meta"), dl = document.getElementById("dl");
+  if (!release) { ver.textContent = loadError ? "—" : t("loading"); meta.textContent = ""; dl.innerHTML = ""; return; }
+  ver.textContent = release.name || release.tag_name;
+  meta.innerHTML = `${t("published")} ${fmtDate(release.published_at)} · <a href="${release.html_url}">${t("releaseNotes")}</a>`;
+  const best = guessPlatform();
+  dl.innerHTML = CFG.assets.map(a => {
+    const asset = release.assets.find(x => new RegExp(a.match).test(x.name));
+    const label = a.label[lang], hint = a.hint[lang];
+    if (!asset) return `<span class="btn off"><strong>${label}</strong><span>${t("notInRelease")}</span></span>`;
+    const cls = (a.id === best || CFG.assets.length === 1) ? "btn primary" : "btn";
+    return `<a class="${cls}" href="${asset.browser_download_url}"><strong>${label}</strong><span>${hint} · ${fmtSize(asset.size)}</span></a>`;
+  }).join("");
+}
+
+function guessPlatform() {
+  const ua = navigator.userAgent;
+  if (/Android/i.test(ua)) return "android";
+  if (/Windows/i.test(ua)) return "windows";
+  if (/Mac/i.test(ua)) return "macos-arm64";
+  if (/Linux/i.test(ua)) return "linux";
+  return "";
+}
+
+document.getElementById("lang").addEventListener("click", () => {
+  lang = lang === "zh" ? "en" : "zh";
+  try { localStorage.setItem("lang", lang); } catch (e) {}
+  render();
+});
+
+render();
+fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(j => { release = j; render(); })
+  .catch(() => { loadError = true; render(); });
+</script>
+</body>
+</html>

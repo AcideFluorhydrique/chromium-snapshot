@@ -1,5 +1,7 @@
 name: Publish Chromium Android snapshot
 
+# Mirror official Google-built Chromium trunk snapshots (Android_Arm64) to GitHub Releases daily.
+# No custom builds; the APK is mirrored unmodified, using the APK's internal versionName as the tag so Obtainium won't report false updates.
 # 每天把 Google 官方編譯的 Chromium 主幹 snapshot（Android_Arm64）轉發成 GitHub Release。
 # 不自己編譯；APK 原封不動，tag 用 APK 內的版號，Obtainium 才不會一直報假更新。
 
@@ -18,8 +20,10 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       PLATFORM: Android_Arm64
       BUCKET: https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o
+      # Public debug signing key built into Chromium source code
       # Chromium 原始碼內建的公開 debug 金鑰
       EXPECTED_CERT: 32a2fc74d731105859e5a85df16d95f102d85b22099b8064c5d8915c61dad1e0
+      # Number of recent releases to keep
       # 只保留最近幾個 Release
       KEEP: 20
     steps:
@@ -48,9 +52,12 @@ jobs:
             echo "$tag already published"; exit 0
           fi
           mv ChromePublic.apk "chromium-$VER-r$REV-android-arm64.apk"
+          notes=$(printf '%s\n\n%s' \
+            "Official Chromium trunk snapshot built by Google, mirrored unmodified. Source: chromium-browser-snapshots/$PLATFORM/$REV. Package name: org.chromium.chrome, signed with Chromium's public debug key (SHA-256: $EXPECTED_CERT)." \
+            "Google 官方編譯的 Chromium 主幹 snapshot，原封不動轉發。來源：chromium-browser-snapshots/$PLATFORM/$REV。包名 org.chromium.chrome，Chromium 公開 debug 金鑰簽名（SHA-256：$EXPECTED_CERT）。")
           gh release create "$tag" "chromium-$VER-r$REV-android-arm64.apk" -R "$GITHUB_REPOSITORY" \
             --title "Chromium $VER (r$REV)" \
-            --notes "Google 官方編譯的 Chromium 主幹 snapshot，原封不動轉發。來源：chromium-browser-snapshots/$PLATFORM/$REV。包名 org.chromium.chrome，Chromium 公開 debug 金鑰簽名（SHA-256 $EXPECTED_CERT）。"
+            --notes "$notes"
 
       - name: Remove old releases
         run: |
